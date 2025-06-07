@@ -5,14 +5,11 @@ using System.Text.RegularExpressions;
 using UserManagementAPI.Models;
 using UserManagementAPI.Middleware;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-/// Global exception handling middleware.
-// Catches unhandled exceptions and returns a JSON error response.
+// Configure middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<AuthenticationMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
