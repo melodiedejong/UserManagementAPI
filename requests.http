@@ -19,12 +19,13 @@ Content-Type: application/json
 ###
 
 POST http://localhost:5114/users
+Authorization: Bearer mysecrettoken123
 Content-Type: application/json
 
 {
-  "username": "Tyler",
-  "email": "tyleremail",
-  "age": 24
+  "UserName": "Tyler",
+  "Email": "tyler@email.com",
+  "Age": 24
 }
 
 ###
@@ -48,6 +49,7 @@ GET http://localhost:5114/throw
 
 ###
 GET http://localhost:5114/throw/404
+Authorization: Bearer mysecrettoken123
 
 ###
 GET http://localhost:5114/users

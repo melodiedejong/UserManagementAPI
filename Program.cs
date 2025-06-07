@@ -2,6 +2,10 @@
 // Features: Authentication, input validation, error handling, and in-memory storage.
 
 using System.Text.RegularExpressions;
+using UserManagementAPI.Models;
+using UserManagementAPI.Middleware;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,81 +13,9 @@ var app = builder.Build();
 
 /// Global exception handling middleware.
 // Catches unhandled exceptions and returns a JSON error response.
-
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "application/json";
-        var errorResponse = System.Text.Json.JsonSerializer.Serialize(new { error = "Internal server error." });
-        await context.Response.WriteAsync(errorResponse);
-        // Optional: log the exception details
-        Console.WriteLine($"Unhandled exception: {ex}");
-    }
-});
-
-// Authentication middleware.
-// Validates Bearer tokens in the Authorization header and returns 401 Unauthorized for invalid or missing tokens.
-
-app.Use(async (context, next) =>
-{
-    // Example: Expect token in Authorization header as "Bearer <token>"
-    var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
-    if (authHeader is null || !authHeader.StartsWith("Bearer "))
-    {
-        context.Response.StatusCode = 401;
-        context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync("{\"error\": \"Unauthorized: Missing or invalid token.\"}");
-        return;
-    }
-
-    var token = authHeader.Substring("Bearer ".Length).Trim();
-
-    // Simple token validation (replace with your real validation logic)
-    var validTokens = new[] { "mysecrettoken123", "another-valid-token" };
-    if (!validTokens.Contains(token))
-    {
-        context.Response.StatusCode = 401;
-        context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync("{\"error\": \"Unauthorized: Invalid token.\"}");
-        return;
-    }
-
-    await next();
-});
-
-// Request/response logging middleware.
-// Logs HTTP method, path, response status, and body for each request.
-
-app.Use(async (context, next) =>
-{
-    // Log the incoming request
-    Console.WriteLine($"Request: {context.Request.Method} {context.Request.Path}");
-
-    // Copy original response body stream
-    var originalBodyStream = context.Response.Body;
-    using var responseBody = new MemoryStream();
-    context.Response.Body = responseBody;
-
-    await next();
-
-    // Read the response body
-    context.Response.Body.Seek(0, SeekOrigin.Begin);
-    var responseText = await new StreamReader(context.Response.Body).ReadToEndAsync();
-    context.Response.Body.Seek(0, SeekOrigin.Begin);
-
-    // Log the response status code and body
-    Console.WriteLine($"Response: {context.Response.StatusCode} {responseText}");
-
-    // Copy the contents of the new memory stream (which contains the response) to the original stream
-    await responseBody.CopyToAsync(originalBodyStream);
-    context.Response.Body = originalBodyStream;
-});
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<AuthenticationMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 // In-memory user dictionaries for fast lookups
 var usersById = new Dictionary<int, User>();
@@ -247,23 +179,3 @@ app.MapGet("/throw", () => Results.Problem("Test exception"));
 
 app.Run();
 
-/// <summary>
-/// Represents a user in the system.
-/// </summary>
-public class User
-{
-    public int Id { get; set; }
-    public required string UserName { get; set; }
-    public int Age { get; set; }
-    public required string Email { get; set; }
-}
-
-/// <summary>
-/// Data Transfer Object for creating or updating a user.
-/// </summary>
-public class UserDto
-{
-    public required string UserName { get; set; }
-    public required int Age { get; set; }
-    public required string Email { get; set; }
-}
