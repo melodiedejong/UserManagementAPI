@@ -1,0 +1,54 @@
+GET http://localhost:5114
+
+###
+GET http://localhost:5114/users
+###
+GET http://localhost:5114/users/6
+
+###
+
+POST http://localhost:5114/users
+Content-Type: application/json
+
+{
+  "username": "Tyler",
+  "email": "housecat@email.com",
+  "age": 23
+}
+
+###
+
+POST http://localhost:5114/users
+Content-Type: application/json
+
+{
+  "username": "Tyler",
+  "email": "tyleremail",
+  "age": 24
+}
+
+###
+DELETE http://localhost:5114/users/2
+###
+
+PUT http://localhost:5114/users/2
+Content-Type: application/json
+
+{
+  "username": "Mel",
+  "email": "melodie@email.com",
+  "age": 24
+}
+###
+
+GET http://localhost:5114/users/by-username/Tyler
+
+###
+GET http://localhost:5114/throw
+
+###
+GET http://localhost:5114/throw/404
+
+###
+GET http://localhost:5114/users
+Authorization: Bearer mysecrettoken123
