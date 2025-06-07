@@ -13,6 +13,11 @@ A minimal ASP.NET Core Web API for managing users with authentication, input val
 - **Request/Response Logging**: Logs HTTP requests and responses to the console.
 - **Test Endpoint**: `/throw` endpoint to test error handling.
 
+## Middleware
+- **Authentication**: Bearer token authentication middleware.
+- **Error Handling**: Global middleware returns consistent JSON error responses.
+- **Request/Response Logging**: Logs HTTP requests and responses to the console.
+
 ## Requirements
 
 - [.NET 6.0](https://dotnet.microsoft.com/download) or later
