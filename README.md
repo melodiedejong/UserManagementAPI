@@ -77,6 +77,17 @@ A minimal ASP.NET Core Web API for managing users with authentication, input val
 - **In-memory storage**: All data is lost when the app stops.
 - **For production**: Use persistent storage, secure token management, and add rate limiting.
 
+## CoPilot Assistance
+- Initial Setup and Refactoring
+- Bug Detection and Validation Enhancements
+- Thread Safety Improvements
+- Security and Robustness
+-- Logging middleware:
+-- Global error handling:
+-- Authentication middleware:
+- Edge Case Testing Support
+- Final Enhancement Recommendations from Copilot
+
 ## License
 
 MIT License
